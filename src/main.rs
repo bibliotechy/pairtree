@@ -3,10 +3,10 @@ use walkdir::{WalkDir,DirEntry};
 use std::fs::read;
 use std::io;
 use std::str::FromStr;
-use std::num::ParseIntError;
 use md5::{Md5, Digest};
 use sha1::{Sha1};
-use sha1::Digest as Sha1Digest;
+use hex;
+use regex;
 
 #[derive(Clone, Copy)]
 enum HashType{
@@ -16,13 +16,13 @@ enum HashType{
 }
 
 impl FromStr for HashType {
-    type Err = ParseIntError;
+    type Err = String;
     fn from_str(hash_type: &str) -> Result<Self, Self::Err> {
         match hash_type {
             "md5" => Ok(HashType::MD5),
             "sha1" => Ok(HashType::SHA1),
             "blake3" => Ok(HashType::Blake3),
-            _ => panic!("Panic") // Want this to be an error, but giving me weird warnings
+            _ => Err(String::from("Please prove a valid Hash type"))
         }
     }
 }
@@ -68,9 +68,9 @@ impl Pairtree {
     fn hex_string(&self) -> String{
         let f = read(self.entry.path()).expect("no file found").to_owned();
         let hex = match self.hash_type {
-            MD5    => self.md5_hash(&f),
-            Blake3 => blake3::hash(f.as_ref()).to_hex().as_str().to_owned(),
-            SHA1   => self.sha1_hash(&f)
+            HashType::MD5    => self.md5_hash(&f),
+            HashType::Blake3 => blake3::hash(f.as_ref()).to_hex().as_str().to_owned(),
+            HashType::SHA1   => self.sha1_hash(&f)
         };
         return hex
     }
@@ -87,8 +87,16 @@ impl Pairtree {
     fn dest_path(&self) -> std::path::PathBuf {
         let mut out_path = self.dest_path_base();
         if !self.use_hash_for_filename {
-            let filename = self.entry.file_name().to_str().unwrap();
-            out_path.push(filename);
+            if self.origin_path_in_dest_name {
+                let path = self.entry.path().to_str().unwrap();
+                let pattern = regex::Regex::new(r"[/\\]").unwrap();
+                let new_path = pattern.replace_all(&path, "_");
+                out_path.push(new_path.to_string());
+            }
+            else {
+                out_path.push(&self.entry.file_name().to_str().unwrap());
+            }
+
         }
         else {
             let filename = self.hex_string();
@@ -111,7 +119,7 @@ impl Pairtree {
         let mut hasher = Md5::new();
         hasher.update(file_contents);
         let result = hasher.finalize();
-        let res = std::str::from_utf8(&result).unwrap();
+        let res = hex::encode(result);
         return res.to_owned()
     }
 
@@ -119,7 +127,7 @@ impl Pairtree {
         let mut hasher = Sha1::new();
         hasher.update(file_contents);
         let result = hasher.finalize();
-        let res = std::str::from_utf8(&result).unwrap(); 
+        let res = hex::encode(result); 
         return res.to_owned()
     }
 }
