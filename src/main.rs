@@ -46,7 +46,7 @@ struct Cli {
     #[structopt(short = "u", long)]
     use_hash_for_filename: bool,
 
-    #[structopt(short = "k", long)]
+    #[structopt(short = "k", long = "keep-extension")]
     keep_file_extension: bool,
 
     #[structopt(short = "o", long)]
@@ -138,7 +138,7 @@ fn main() -> io::Result<()> {
 
     let dest_dir = match args.dest_dir.to_str() {
         Some(x) => x,
-        None    => panic!("Dest dir not specified")
+        None    => panic!("Dest dir not specified") // Can I handle this cleaner?
     };
 
     if !args.dest_dir.exists() {
