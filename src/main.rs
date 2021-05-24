@@ -34,22 +34,22 @@ impl FromStr for HashType {
 #[structopt(rename_all = "kebab-case")]
 struct Cli {
     
-    #[structopt(short = "s", long, parse(from_os_str))]
+    #[structopt(short = "s", long, help = "Path to directory with existing files to be moved.", parse(from_os_str))]
     source_dir: std::path::PathBuf,
 
-    #[structopt(short = "d", long, parse(from_os_str))]
+    #[structopt(short = "d", long, help = "Path to directory where pairtree structure will be created.", parse(from_os_str))]
     dest_dir: std::path::PathBuf,
 
-    #[structopt(short = "h", long, default_value = "blake3")]
+    #[structopt(short = "h", long, help = "Type of has algorithm to use. Options: md5, sha1, blake3.", default_value = "blake3")]
     hash_type: HashType,
 
-    #[structopt(short = "u", long)]
+    #[structopt(short = "u", long, help = "Use the hash as the filename in the destination directory.")]
     use_hash_for_filename: bool,
 
-    #[structopt(short = "k", long = "keep-extension")]
+    #[structopt(short = "k", long = "keep-extension", help = "If using the hash as the file name, retain the original file extension.")]
     keep_file_extension: bool,
 
-    #[structopt(short = "o", long)]
+    #[structopt(short = "o", long, help = "Use the full filepath to the source file as the name of the destination file, replacing '/' with '_'.")]
     origin_path_in_dest_name: bool
 
 }
