@@ -73,4 +73,8 @@ var/data/
 ```
 
 ------
+
+Shoutout to @demiankatz, @crhallberg, @Geoffsc, and @nomadicoder for the code swarm and review session that helped me fix multiple bugs!
+
+------
 License: [Hippocratic License Version Number: 2.1.](license.md)
