@@ -74,7 +74,7 @@ var/data/
 
 ------
 
-Shoutout to https://github.com/demiankatz, https://github.com/crhallberg, https://github.com/Geoffsc, and https://github.com/nomadicoder for the code swarm and review session that helped me fix multiple bugs!
+Shoutout to [@demiankatz](https://github.com/demiankatz), [@crhallberg](https://github.com/crhallberg), [@Geoffsc](https://github.com/Geoffsc), and [@nomadicoder](https://github.com/nomadicoder) for the code swarm and review session that helped me fix multiple bugs!
 
 ------
 License: [Hippocratic License Version Number: 2.1.](license.md)
